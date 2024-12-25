@@ -1,0 +1,102 @@
+# Little Parrot Timer / 小虎皮鹦鹉计时器
+
+A Pomodoro Timer application dedicated to the memory of my beloved pet parrot who passed away on December 21, 2024.
+
+这是一个番茄钟计时器应用程序，献给我在2024年12月21日离世的挚爱宠物鹦鹉。
+
+## About / 关于
+
+This project is created as a memorial to my little budgerigar, a cherished companion who brought happiness and warmth to my life. The application serves both as a practical productivity tool and a tribute to the joyful spirit of my feathered friend.
+
+这个项目是为了纪念我的小虎皮鹦鹉而创建的，它是我生命中带来欢乐和温暖的珍贵伙伴。这个应用程序既是一个实用的生产力工具，也是对我这位羽毛朋友欢快精神的致敬。
+
+## Why do I create this project for my little budgerigar? / 为什么我会创建这个项目来纪念我的小虎皮鹦鹉？
+
+2024年12月21日，由于是周六，所以把它从笼子里放出来让它自己玩。下午1点04分，小鹦鹉从摄像头中消失（飞到了书房/厨房/次卧/别的地方），紧接着从摄像头中听到它的呼救声。它的小伙伴期间来回多次盘旋，从笼子（摄像头视线内）非到事发地（未知）。1点13分，我从外面回来，因为跟家人说话，没注意到它的求救声，1点15分开始，再也听不到它的声音。2点10分发现这只小黄鹦鹉不见了，后续翻遍了可能的地方（书房的书全部翻出来了），未能找到。
+我总觉得应该做点什么，纪念这只可爱的小精灵。想来想去，还是做个跟时间相关的程序吧。
+加上之前看过一些番茄工作法的书，做个小工具纪念它吧。
+
+
+
+
+On December 21, 2024, since it was a Saturday, we let it out of its cage to play on its own. At 1:04 PM, the little parrot disappeared from the camera’s view (it flew to the study/kitchen/guest room/other places). Shortly afterward, cries for help could be heard from the camera. Its little companion flew back and forth several times, from the cage (within the camera's view) to the scene of the incident (location unknown).
+
+At 1:13 PM, I returned home but, preoccupied with talking to family, didn’t notice its cries for help. By 1:15 PM, its voice could no longer be heard. At 2:10 PM, I discovered that the little yellow parrot was missing. Despite searching every possible location (even flipping through all the books in the study), it couldn’t be found.
+
+I feel like I should do something to commemorate this adorable little spirit. After much thought, I’ve decided to create a time-related program to honor it. Having read some books about the Pomodoro Technique, I thought I could make a small tool in its memory.
+
+
+### 2024-12-25 23：11:11  目前双语的功能还有点bug，功能性都可用了，后续我会慢慢迭代。
+December 25, 2024, 11:11 PM – The bilingual functionality still has some bugs at the moment, but the tool is functional. I’ll gradually improve it in future updates.
+
+
+**祝所有的小精灵快乐、健康。**
+**Wishing all little spirits happiness and good health.**
+
+## Features / 功能特点
+
+- Customizable Pomodoro timer / 可自定义的番茄钟计时器
+- Project-based task tracking / 基于项目的任务跟踪
+- Statistics visualization / 统计数据可视化
+- System tray integration / 系统托盘集成
+- Adjustable opacity and always-on-top options / 可调节透明度和窗口置顶选项
+- Elegant and minimal interface / 优雅简约的界面
+- Multi-language support (English/Chinese) / 多语言支持（英文/中文）
+
+## Technical Details / 技术细节
+
+Built with / 使用技术:
+- Python
+- PyQt5
+- SQLite
+
+## Installation / 安装方法
+
+1. Clone the repository / 克隆仓库
+   ```bash
+   git clone [repository-url]
+   ```
+
+2. Install requirements / 安装依赖
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the application / 运行应用
+   ```bash
+   python main.py
+   ```
+
+## Usage / 使用说明
+
+- Right-click the system tray icon to access all features / 右键点击系统托盘图标访问所有功能
+- Left-click and drag to move the timer window / 左键点击并拖动来移动计时器窗口
+- Double-click the system tray icon to show/hide the timer / 双击系统托盘图标显示/隐藏计时器
+
+## License / 许可证
+
+This project is open source and available under the MIT License.
+
+本项目采用 MIT 许可证开源。
+
+## In Memory / 纪念
+
+This project is dedicated to my little budgerigar (? - December 21, 2024).
+May your spirit soar freely in the endless sky.
+
+谨以此项目献给我的小虎皮鹦鹉（? - 2024年12月21日）。
+愿你的灵魂在无垠的天际自由翱翔。 
+
+## Screenshot
+就是这只可爱的小黄鹦鹉，吃个饭都要跑碗里抢吃的，如今它走了……
+![Little Parrot就是这只可爱的小黄鹦鹉，吃个饭都要跑碗里抢吃的，如今它走了……](/images/littleparrot.png)
+
+![StartPage](/images/start1.png)
+
+![Create Project](/images/project.png)
+
+![Set Timer](/images/timer.png)
+
+![Settings](/images/settings.png)
+
+![Statistics](/images/statistics.png)
