@@ -21,6 +21,7 @@ class LanguageManager:
                 "project_statistics": "Project Statistics",
                 "about": "About",
                 "quit": "Quit",
+                "export":"Export",
                 
                 # 项目相关
                 "project_name": "Project Name:",
@@ -88,6 +89,7 @@ class LanguageManager:
                 "project_statistics": "项目统计",
                 "about": "关于",
                 "quit": "退出",
+                "export":"导出Excel",
                 
                 # 项目相关
                 "project_name": "项目名称：",

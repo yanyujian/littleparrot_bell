@@ -124,3 +124,11 @@ class DatabaseManager:
                 ORDER BY total_minutes DESC
             """)
             return cursor.fetchall() 
+
+
+    def get_details(self):
+        """获取所有任务明细"""
+        with sqlite3.connect(self.db_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT  tasks.id,projects.name as projectName,tasks.duration_minutes,tasks.completed_at,tasks.description from tasks inner join projects on tasks.project_id=projects.id")
+            return cursor.fetchall()

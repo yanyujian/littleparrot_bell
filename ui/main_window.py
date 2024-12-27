@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                           QPushButton, QLabel, QInputDialog, 
-                           QComboBox, QMessageBox, QSystemTrayIcon,
-                           QMenu, QAction, QFrame, QApplication, QSlider,
-                           QDialog, QLineEdit, QSpinBox, QTableWidget,
-                           QTableWidgetItem, QHeaderView, QTextEdit, QActionGroup)
+                             QPushButton, QLabel, QInputDialog,
+                             QComboBox, QMessageBox, QSystemTrayIcon,
+                             QMenu, QAction, QFrame, QApplication, QSlider,
+                             QDialog, QLineEdit, QSpinBox, QTableWidget,
+                             QTableWidgetItem, QHeaderView, QTextEdit, QActionGroup)
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QPainter, QBrush
 from PyQt5.QtWidgets import QStyle
@@ -11,23 +11,28 @@ from database.db_manager import DatabaseManager
 import os
 from utils.config_manager import ConfigManager
 from utils.language_manager import LanguageManager
+import xlsxwriter
+from datetime import datetime
+
+from utils import sysHelper
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.db = DatabaseManager()
         self.timer = QTimer()
-        
+
         # 添加预设时间选项（分钟）
         self.time_presets = [15, 20, 25, 30, 45]
         self.default_time = 25 * 60
         self.remaining_time = self.default_time
-        
+
         # 设置应用主题色
-        self.primary_color = "#1E88E5"       # 主要蓝色
-        self.secondary_color = "#212121"      # 深色背景
-        self.accent_color = "#4CAF50"         # 绿色
-        self.text_color = "#FFFFFF"           # 文本色
+        self.primary_color = "#1E88E5"  # 主要蓝色
+        self.secondary_color = "#212121"  # 深色背景
+        self.accent_color = "#4CAF50"  # 绿色
+        self.text_color = "#FFFFFF"  # 文本色
 
         # 初始化拖动位置
         self.drag_position = None
@@ -59,20 +64,20 @@ class MainWindow(QMainWindow):
         if self.background.isNull():
             print(f"Warning: Failed to load background image from {bg_path}")
             self.background = QPixmap(32, 32)  # 创建一个空�����������������背景
-        
+
         # 设置窗口背景为半透明黑色
         self.overlay_color = QColor(0, 0, 0, 180)  # RGBA，最后一个值是透明度
 
         # 添加配置管理器
         self.config = ConfigManager()
-        
+
         # 设置窗口位置
         pos = self.config.get("window_position")
         self.move(pos["x"], pos["y"])
-        
+
         # 设置窗���透明度
         self.setWindowOpacity(self.config.get("opacity"))
-        
+
         # 设置窗口标志
         flags = Qt.Tool | Qt.FramelessWindowHint
         if self.config.get("always_on_top"):
@@ -173,64 +178,64 @@ class MainWindow(QMainWindow):
             del self.tray_icon
 
         self.tray_icon = QSystemTrayIcon(self)
-        
+
         # 使用一个明显的系统图�����
         icon = self.style().standardIcon(QStyle.SP_MediaPlay)
         self.tray_icon.setIcon(icon)
-        
+
         # 创建托盘菜单
         tray_menu = QMenu()
         tray_menu.setStyleSheet(self.menu_style)  # 使用���面定义���菜单样���
-        
+
         # 显示/隐藏主窗口
         toggle_window_action = QAction(self.tr("show_hide"), self)
         toggle_window_action.triggered.connect(self.toggle_window)
         tray_menu.addAction(toggle_window_action)
-        
+
         # ��始/停止计时
         self.tray_timer_action = QAction(self.tr("start"), self)
         self.tray_timer_action.triggered.connect(self.toggle_timer)
         tray_menu.addAction(self.tray_timer_action)
-        
+
         # 重置时间
         reset_action = QAction(self.tr("reset"), self)
         reset_action.triggered.connect(self.reset_timer)
         tray_menu.addAction(reset_action)
-        
+
         # 添加时间设置���菜单
         time_menu = QMenu(self.tr("set_timer"), self)
         time_menu.setObjectName("time_menu")
         time_menu.setStyleSheet(self.menu_style)
-        
+
         # 添加预设时间选项
         for minutes in self.time_presets:
             action = QAction(f"{minutes} {self.tr('minutes')}", self)
             action.setObjectName(f"preset_{minutes}")
             action.triggered.connect(lambda checked, m=minutes: self.set_timer_duration(m))
             time_menu.addAction(action)
-        
+
         # 添加自定义时间选项
         custom_time_action = QAction(self.tr("custom"), self)
         custom_time_action.setObjectName("custom_time")
         custom_time_action.triggered.connect(self.set_custom_timer_duration)
         time_menu.addAction(custom_time_action)
-        
+
         # 将时设置菜单添加到菜单
         tray_menu.addMenu(time_menu)
-        
+
         # 将添加项目移到设置菜单中
         settings_menu = QMenu(self.tr("settings"), self)
         settings_menu.setObjectName("settings_menu")  # 设置对象名称
         settings_menu.setStyleSheet(self.menu_style)
-        
+
         # 添加项目选项
         add_project_action = QAction(self.tr("add_project"), self)
         add_project_action.setObjectName("add_project_action")
         add_project_action.triggered.connect(self.add_project)
         settings_menu.addAction(add_project_action)
-        
+
         settings_menu.addSeparator()
-        
+
         # 添加置顶选项
         always_on_top_action = QAction(self.tr("always_on_top"), self)
         always_on_top_action.setObjectName("always_on_top_action")
@@ -238,40 +243,40 @@ class MainWindow(QMainWindow):
         always_on_top_action.setChecked(self.config.get("always_on_top"))
         always_on_top_action.triggered.connect(self.toggle_always_on_top)
         settings_menu.addAction(always_on_top_action)
-        
-        # 添加透���度设置子菜单
+
+        # 添加透明度设置子菜单
         opacity_menu = QMenu(self.tr("opacity"), self)
         opacity_menu.setObjectName("opacity_menu")  # 设置对象名称
         opacity_menu.setStyleSheet(self.menu_style)
-        
+
         opacity_values = [0.3, 0.5, 0.7, 0.8, 0.9, 1.0]
         current_opacity = self.config.get("opacity")
-        
+
         for opacity in opacity_values:
             action = QAction(f"{int(opacity * 100)}%", self)
             action.setCheckable(True)
             action.setChecked(abs(opacity - current_opacity) < 0.01)
             action.triggered.connect(lambda checked, o=opacity: self.set_opacity(o))
             opacity_menu.addAction(action)
-        
+
         settings_menu.addMenu(opacity_menu)
-        
+
         # 在 Settings 菜单中添加查看项目统计的选项
         settings_menu.addSeparator()
         stats_action = QAction(self.tr("project_statistics"), self)
         stats_action.setObjectName("stats_action")
         stats_action.triggered.connect(self.show_project_statistics)
         settings_menu.addAction(stats_action)
-        
+
         # 添加语言切换菜单
         lang_menu = QMenu(self.tr("language"), self)
         lang_menu.setObjectName("language_menu")
         lang_menu.setStyleSheet(self.menu_style)
-        
+
         # 添加语言选项
         lang_group = QActionGroup(self)
         lang_group.setExclusive(True)
-        
+
         for lang, name in [("en", "English"), ("zh", "中文")]:
             action = QAction(name, self)
             action.setObjectName(f"lang_{lang}")
@@ -281,37 +286,44 @@ class MainWindow(QMainWindow):
             action.triggered.connect(lambda checked, l=lang: self.change_language(l))
             lang_group.addAction(action)
             lang_menu.addAction(action)
-        
+
         settings_menu.addMenu(lang_menu)
-        
+
         # 将设置菜单添加到主菜单
         tray_menu.addMenu(settings_menu)
-        
+
         # 添加分隔线
         tray_menu.addSeparator()
-        
+
         # 添加项目统计选项（移到这里）
         stats_action = QAction(self.tr("project_statistics"), self)
         stats_action.setObjectName("stats_action")
         stats_action.triggered.connect(self.show_project_statistics)
         tray_menu.addAction(stats_action)
-        
+
+        # 添加分隔线
+        tray_menu.addSeparator()
+        export_action = QAction(self.tr("export"), self)
+        export_action.triggered.connect(self.export_data)
+        tray_menu.addAction(export_action)
+        tray_menu.addSeparator()
+
         # 添加关于选项
         about_action = QAction(self.tr("about"), self)
         about_action.triggered.connect(self.show_about_dialog)
         tray_menu.addAction(about_action)
-        
+
         # 添加分隔线
         tray_menu.addSeparator()
-        
+
         # 退出程序
         quit_action = QAction(self.tr("quit"), self)
         quit_action.triggered.connect(self.quit_application)
         tray_menu.addAction(quit_action)
-        
+
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.setToolTip("Pomodoro Timer")
-        
+
         # 确保图显示并处理激活事件
         self.tray_icon.show()
         self.tray_icon.activated.connect(self.tray_icon_activated)
@@ -361,7 +373,7 @@ class MainWindow(QMainWindow):
         minutes = self.remaining_time // 60
         seconds = self.remaining_time % 60
         time_text = f"{minutes:02d}:{seconds:02d}"
-        
+
         if self.remaining_time <= 0:
             self.timer.stop()
             self.start_button.setText("Start")
@@ -575,7 +587,7 @@ class MainWindow(QMainWindow):
         # 按钮布局
         button_layout = QHBoxLayout()
         button_layout.setSpacing(10)
-        
+
         save_button = QPushButton("Save")
         cancel_button = QPushButton("Cancel")
         cancel_button.setStyleSheet("""
@@ -603,16 +615,16 @@ class MainWindow(QMainWindow):
         if dialog.exec() == QDialog.Accepted:
             description = desc_input.toPlainText().strip()
             project_id = project_combo.currentData()
-            
+
             if description and project_id is not None:
                 if self.db.add_task(project_id, description, actual_duration):
                     self.show_message(
-                        "Success", 
+                        "Success",
                         f"Task record saved!\nDuration: {actual_duration} minutes"
                     )
                 else:
                     self.show_message(
-                        "Error", 
+                        "Error",
                         "Failed to save task record!",
                         QMessageBox.Warning
                     )
@@ -675,7 +687,7 @@ class MainWindow(QMainWindow):
                 background-color: #1976D2;
             }
         """)
-        
+
         msg_box.setFixedSize(300, 150)
         return msg_box.exec_()
 
@@ -684,7 +696,7 @@ class MainWindow(QMainWindow):
         if self.timer.isActive():
             self.show_message("Warning", "Please stop the timer first!", QMessageBox.Warning)
             return
-        
+
         # 创建自定义对话框
         dialog = QDialog(self)
         dialog.setWindowTitle("Custom Timer")
@@ -769,19 +781,19 @@ class MainWindow(QMainWindow):
     def paintEvent(self, event):
         """重写绘制事件，绘制背景图"""
         painter = QPainter(self)
-        
+
         # 绘制缩放后的背景图
         scaled_bg = self.background.scaled(self.size(), Qt.KeepAspectRatioByExpanding)
-        
+
         # 计算居位置
         x = (self.width() - scaled_bg.width()) // 2
         y = (self.height() - scaled_bg.height()) // 2
-        
+
         # 绘制背景图
         painter.drawPixmap(x, y, scaled_bg)
-        
+
         # 绘制半透明遮罩
-        painter.fillRect(self.rect(), self.overlay_color) 
+        painter.fillRect(self.rect(), self.overlay_color)
 
     def mousePressEvent(self, event):
         """记录鼠标按下时的位置"""
@@ -819,7 +831,40 @@ class MainWindow(QMainWindow):
     def set_opacity(self, opacity):
         """设置窗口透明度"""
         self.setWindowOpacity(opacity)
-        self.config.set("opacity", opacity) 
+        self.config.set("opacity", opacity)
+
+    def export_data(self):
+        """将数据明细导出到Excel中"""
+        # 创建一个Excel文件
+        excelPath = f'data_export{datetime.now().strftime("%Y-%m-%d")}.xlsx'
+        workbook = xlsxwriter.Workbook(excelPath)
+
+        # 添加一个工作表
+        worksheet = workbook.add_worksheet()
+        bold = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'size': 16})
+        # 设置列宽
+        worksheet.set_column(0, 0, 10, bold)  # 任务id
+        worksheet.set_column(1, 1, 30, bold)  # 项目名称
+        worksheet.set_column(2, 2, 10, bold)  # 用时列
+        worksheet.set_column(3, 3, 30, bold)  # 完成时间列
+        worksheet.set_column(4, 4, 100, bold)  # 任务描述
+        # 设置行高
+        worksheet.set_row(0, 20)  # 标题行
+        worksheet.set_row(1, 15)  # 数据行
+        # 设置标题
+        worksheet.write(0, 0, "任务ID")
+        worksheet.write(0, 1, "项目名称")
+        worksheet.write(0, 2, "用时")
+        worksheet.write(0, 3, "完成时间")
+        worksheet.write(0, 4, "任务描述")
+        # 读取数据
+        details = self.db.get_details()
+        for rowIndex, row in enumerate(details):
+            realRowIndex = rowIndex + 1
+            for columnIndex in range(len(row)):
+                worksheet.write(realRowIndex, columnIndex, row[columnIndex])
+        workbook.close()
+        sysHelper.openExcelFile(excelPath)
 
     def show_project_statistics(self):
         """显示项目统计信息"""
@@ -885,17 +930,17 @@ class MainWindow(QMainWindow):
             "Total Time",
             "Average Time/Task"
         ])
-        
+
         # 设置表格列宽
         header = table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.Stretch)  # 项目名称列自适应
-        header.setSectionResizeMode(1, QHeaderView.Fixed)    # 任务数固定宽度
-        header.setSectionResizeMode(2, QHeaderView.Fixed)    # 总时间固定宽度
-        header.setSectionResizeMode(3, QHeaderView.Fixed)    # 平均时间固定宽度
-        
-        table.setColumnWidth(1, 100)    # 任务数列����
-        table.setColumnWidth(2, 120)    # 总时间列宽增加到 120
-        table.setColumnWidth(3, 140)    # 平均时间列宽增加到 140
+        header.setSectionResizeMode(1, QHeaderView.Fixed)  # 任务数固定宽度
+        header.setSectionResizeMode(2, QHeaderView.Fixed)  # 总时间固定宽度
+        header.setSectionResizeMode(3, QHeaderView.Fixed)  # 平均时间固定宽度
+
+        table.setColumnWidth(1, 100)  # 任务数列����
+        table.setColumnWidth(2, 120)  # 总时间列宽增加到 120
+        table.setColumnWidth(3, 140)  # 平均时间列宽增加到 140
 
         # 填充数据
         table.setRowCount(len(stats))
@@ -908,12 +953,12 @@ class MainWindow(QMainWindow):
 
             # 项目名称
             table.setItem(row, 0, QTableWidgetItem(name))
-            
+
             # 任务数量
             task_item = QTableWidgetItem(str(task_count))
             task_item.setTextAlignment(Qt.AlignCenter)
             table.setItem(row, 1, task_item)
-            
+
             # 总时长
             hours = total_minutes // 60
             mins = total_minutes % 60
@@ -924,12 +969,12 @@ class MainWindow(QMainWindow):
             time_item = QTableWidgetItem(time_str)
             time_item.setTextAlignment(Qt.AlignCenter)
             table.setItem(row, 2, time_item)
-            
+
             # 平均时长
             if task_count > 0:
                 avg_mins = total_minutes / task_count
                 if avg_mins >= 60:
-                    avg_str = f"{avg_mins/60:.1f}h"
+                    avg_str = f"{avg_mins / 60:.1f}h"
                 else:
                     avg_str = f"{avg_mins:.1f}m"
             else:
@@ -944,11 +989,11 @@ class MainWindow(QMainWindow):
         total_hours = total_time // 60
         total_mins = total_time % 60
         total_info = (f"Total Statistics: {total_tasks} tasks, "
-                     f"Total time: {total_hours}h {total_mins}m")
+                      f"Total time: {total_hours}h {total_mins}m")
         if total_tasks > 0:
             avg_time = total_time / total_tasks
             if avg_time >= 60:
-                avg_str = f"{avg_time/60:.1f}h"
+                avg_str = f"{avg_time / 60:.1f}h"
             else:
                 avg_str = f"{avg_time:.1f}m"
             total_info += f", Average: {avg_str}/task"
@@ -985,13 +1030,13 @@ class MainWindow(QMainWindow):
         close_button.clicked.connect(dialog.accept)
         layout.addWidget(close_button, alignment=Qt.AlignCenter)
 
-        dialog.exec_() 
+        dialog.exec_()
 
     def show_about_dialog(self):
         """显示关于对话框"""
         dialog = QDialog(self)
         dialog.setWindowTitle("About Little Parrot Timer")
-        dialog.setFixedSize(700,668)  # 增加宽度从 600 到 700
+        dialog.setFixedSize(700, 668)  # 增加宽度从 600 到 700
         dialog.setStyleSheet(f"""
             QDialog {{
                 background-color: {self.secondary_color};
@@ -1039,12 +1084,12 @@ Though your time with us was brief, your impact was profound.
 May your spirit soar freely in the endless sky,
 Your cheerful chirps will forever echo in my heart.
 愿你的灵魂在无垠的天际自由翱翔，
-你欢快的啁��将永远在��心中回响。
+你欢快的啁啾声将永远在我的心中回响。
 
 Rest in Peace, Little Friend
 安息吧，我的小伙伴
         """
-        
+
         memorial_label = QLabel(memorial_text)
         memorial_label.setStyleSheet("""
             color: #FFD700;
@@ -1090,13 +1135,13 @@ Created with love and memory / 用爱与回忆创造
         close_button.clicked.connect(dialog.accept)
         layout.addWidget(close_button, alignment=Qt.AlignCenter)
 
-        dialog.exec_() 
+        dialog.exec_()
 
     def change_language(self, lang: str):
         """切换语言"""
         self.current_lang = lang
         self.config.set("language", lang)
-        
+
         # 更新语言选项的选中状态
         menu = self.tray_icon.contextMenu()
         settings_menu = menu.findChild(QMenu, "settings_menu")
@@ -1105,7 +1150,7 @@ Created with love and memory / 用爱与回忆创造
             if lang_menu:
                 for action in lang_menu.actions():
                     action.setChecked(action.data() == lang)
-        
+
         # 更新所有UI文本
         self.update_ui_texts()
 
@@ -1113,17 +1158,17 @@ Created with love and memory / 用爱与回忆创造
         """更新所有UI文本"""
         # 更新窗口标题
         self.setWindowTitle(self.tr("pomodoro_timer"))
-        
+
         # 更新按钮文本
         if self.timer.isActive():
             self.start_button.setText(self.tr("stop"))
         else:
             self.start_button.setText(self.tr("start"))
         self.reset_button.setText(self.tr("reset"))
-        
+
         # 更新托盘菜单文本
         self.update_tray_menu_texts()
-        
+
         # 更新托盘图标提示
         minutes = self.remaining_time // 60
         seconds = self.remaining_time % 60
@@ -1131,18 +1176,18 @@ Created with love and memory / 用爱与回忆创造
 
     def tr(self, key: str, *args) -> str:
         """翻译辅助方法"""
-        return self.lang_manager.get(key, self.current_lang, *args) 
+        return self.lang_manager.get(key, self.current_lang, *args)
 
     def update_tray_menu_texts(self):
         """更新托盘菜单的文本"""
         menu = self.tray_icon.contextMenu()
-        
+
         # 更新主菜单项
         actions = menu.actions()
         actions[0].setText(self.tr("show_hide"))
         self.tray_timer_action.setText(self.tr("start") if not self.timer.isActive() else self.tr("stop"))
         actions[2].setText(self.tr("reset"))
-        
+
         # 更新时间设置菜单
         for action in actions:
             if isinstance(action, QMenu) and action.objectName() == "time_menu":
@@ -1170,8 +1215,8 @@ Created with love and memory / 用爱与回忆创造
                             sub_item.setTitle(self.tr("opacity"))
                         elif sub_item.objectName() == "language_menu":
                             sub_item.setTitle(self.tr("language"))
-        
+
         # 更新项目统计、关于和退出选项
         actions[-4].setText(self.tr("project_statistics"))  # 项目统计
-        actions[-3].setText(self.tr("about"))              # 关于
-        actions[-1].setText(self.tr("quit"))               # 退出 
+        actions[-3].setText(self.tr("about"))  # 关于
+        actions[-1].setText(self.tr("quit"))  # 退出

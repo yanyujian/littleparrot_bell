@@ -7,7 +7,7 @@ def main():
     # 防止程序退出后图标残留
     try:
         import ctypes
-        myappid = 'mycompany.myproduct.subproduct.version'
+        myappid = 'fengzili.littleparrot.pomodoro.v1'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except:
         pass
