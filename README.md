@@ -6,7 +6,9 @@ A Pomodoro Timer application dedicated to the memory of my beloved pet parrot wh
 
 ## About / 关于
 
-This project is created as a memorial to my little budgerigar, a cherished companion who brought happiness and warmth to my life. The application serves both as a practical productivity tool and a tribute to the joyful spirit of my feathered friend.
+This project is created as a memorial to my little budgerigar, a cherished companion who brought happiness and warmth to
+my life. The application serves both as a practical productivity tool and a tribute to the joyful spirit of my feathered
+friend.
 
 这个项目是为了纪念我的小虎皮鹦鹉而创建的，它是我生命中带来欢乐和温暖的珍贵伙伴。这个应用程序既是一个实用的生产力工具，也是对我这位羽毛朋友欢快精神的致敬。
 
@@ -16,19 +18,23 @@ This project is created as a memorial to my little budgerigar, a cherished compa
 我总觉得应该做点什么，纪念这只可爱的小精灵。想来想去，还是做个跟时间相关的程序吧。
 加上之前看过一些番茄工作法的书，做个小工具纪念它吧。
 
+On December 21, 2024, since it was a Saturday, we let it out of its cage to play on its own. At 1:04 PM, the little
+parrot disappeared from the camera’s view (it flew to the study/kitchen/guest room/other places). Shortly afterward,
+cries for help could be heard from the camera. Its little companion flew back and forth several times, from the cage (
+within the camera's view) to the scene of the incident (location unknown).
 
+At 1:13 PM, I returned home but, preoccupied with talking to family, didn’t notice its cries for help. By 1:15 PM, its
+voice could no longer be heard. At 2:10 PM, I discovered that the little yellow parrot was missing. Despite searching
+every possible location (even flipping through all the books in the study), it couldn’t be found.
 
-
-On December 21, 2024, since it was a Saturday, we let it out of its cage to play on its own. At 1:04 PM, the little parrot disappeared from the camera’s view (it flew to the study/kitchen/guest room/other places). Shortly afterward, cries for help could be heard from the camera. Its little companion flew back and forth several times, from the cage (within the camera's view) to the scene of the incident (location unknown).
-
-At 1:13 PM, I returned home but, preoccupied with talking to family, didn’t notice its cries for help. By 1:15 PM, its voice could no longer be heard. At 2:10 PM, I discovered that the little yellow parrot was missing. Despite searching every possible location (even flipping through all the books in the study), it couldn’t be found.
-
-I feel like I should do something to commemorate this adorable little spirit. After much thought, I’ve decided to create a time-related program to honor it. Having read some books about the Pomodoro Technique, I thought I could make a small tool in its memory.
-
+I feel like I should do something to commemorate this adorable little spirit. After much thought, I’ve decided to create
+a time-related program to honor it. Having read some books about the Pomodoro Technique, I thought I could make a small
+tool in its memory.
 
 ### 2024-12-25 23：11:11  目前双语的功能还有点bug，功能性都可用了，后续我会慢慢迭代。
-December 25, 2024, 11:11 PM – The bilingual functionality still has some bugs at the moment, but the tool is functional. I’ll gradually improve it in future updates.
 
+December 25, 2024, 11:11 PM – The bilingual functionality still has some bugs at the moment, but the tool is functional.
+I’ll gradually improve it in future updates.
 
 **祝所有的小精灵快乐、健康。**
 **Wishing all little spirits happiness and good health.**
@@ -46,6 +52,7 @@ December 25, 2024, 11:11 PM – The bilingual functionality still has some bugs 
 ## Technical Details / 技术细节
 
 Built with / 使用技术:
+
 - Python
 - PyQt5
 - SQLite
@@ -66,12 +73,15 @@ Built with / 使用技术:
    ```bash
    python main.py
    ```
+4. You can just download the release version and run the exe file / 直接下载release版本，运行exe文件 .
 
 ## Usage / 使用说明
 
 - Right-click the system tray icon to access all features / 右键点击系统托盘图标访问所有功能
 - Left-click and drag to move the timer window / 左键点击并拖动来移动计时器窗口
 - Double-click the system tray icon to show/hide the timer / 双击系统托盘图标显示/隐藏计时器
+- Right-click the system tray icon and select export to export the task details into an Excel file at the program
+  directory / 右键点击系统托盘图标并选择导出，将任务详情导出到程序目录下的Excel文件中
 
 ## License / 许可证
 
@@ -85,9 +95,10 @@ This project is dedicated to my little budgerigar (? - December 21, 2024).
 May your spirit soar freely in the endless sky.
 
 谨以此项目献给我的小虎皮鹦鹉（? - 2024年12月21日）。
-愿你的灵魂在无垠的天际自由翱翔。 
+愿你的灵魂在无垠的天际自由翱翔。
 
 ## Screenshot
+
 就是这只可爱的小黄鹦鹉，吃个饭都要跑碗里抢吃的，如今它走了……
 ![Little Parrot就是这只可爱的小黄鹦鹉，吃个饭都要跑碗里抢吃的，如今它走了……](/images/littleparrot.png)
 
@@ -100,3 +111,18 @@ May your spirit soar freely in the endless sky.
 ![Settings](/images/settings.png)
 
 ![Statistics](/images/statistics.png)
+
+## How to set the auto start / 如何设置开机自启动
+
+1. 找到程序文件（如littleparrot.exe) ,右键点击，选择发送到桌面快捷方式 / 1. Find the program file (e.g.,
+   littleparrot.exe), right-click, and select "Create shortcut" to create a desktop shortcut.
+2. 将桌面快捷方式复制到C:\Users\用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup / 2. Copy the
+   desktop shortcut to C:\Users\YourUsername\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+
+## Update Logs
+
+### 2024-12-28 12:59:34 确保计时结束时能够填写任务记录/ Ensure that task records can be filled out when the timer ends
+
+1. If no project has been created, the program will prompt the user to create a project before record the task. /
+   如果没有创建项目，程序会提示用户在记录任务之前创建项目。
+2. Remember the last project . / 记住上次的项目。 (仅在同一次运行中有效/Only valid in the same run)

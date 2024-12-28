@@ -20,6 +20,7 @@ from utils import sysHelper
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.currentProjectIndex = 0
         self.db = DatabaseManager()
         self.timer = QTimer()
 
@@ -478,15 +479,17 @@ class MainWindow(QMainWindow):
                 else:
                     self.show_message("Error", "Failed to add project. It may already exist.", QMessageBox.Warning)
 
+    def update_project_items(self, project_combo: QComboBox):
+        # 获取项目列表
+        while len(projects := self.db.get_projects()) == 0:
+            self.show_message("Warning", "Please add a project first!", QMessageBox.Warning)
+        for project_id, project_name in projects:
+            if project_combo.findData(project_id) == -1:
+                project_combo.addItem(project_name, project_id)
+
     def show_task_dialog(self):
         """显示任务完成对话框"""
-        # 获取项目列表
-        projects = self.db.get_projects()
-        if not projects:
-            self.show_message("Warning", "Please add a project first!", QMessageBox.Warning)
-            return
-
-        # 创建����定义对话框
+        # 创建自定义对话框
         dialog = QDialog(self)
         dialog.setWindowTitle("Complete Task")
         dialog.setFixedSize(400, 300)  # 增加高度
@@ -547,8 +550,6 @@ class MainWindow(QMainWindow):
 
         project_combo = QComboBox()
         project_combo.setFixedHeight(35)  # 设置下拉框高度
-        for project_id, project_name in projects:
-            project_combo.addItem(project_name, project_id)
         layout.addWidget(project_combo)
 
         # 任务描述
@@ -610,24 +611,35 @@ class MainWindow(QMainWindow):
         # 连接按钮信号
         save_button.clicked.connect(dialog.accept)
         cancel_button.clicked.connect(dialog.reject)
-
+        alreadySetDefaultIndex = False
         # 显示对话框
-        if dialog.exec() == QDialog.Accepted:
-            description = desc_input.toPlainText().strip()
-            project_id = project_combo.currentData()
-
-            if description and project_id is not None:
-                if self.db.add_task(project_id, description, actual_duration):
-                    self.show_message(
-                        "Success",
-                        f"Task record saved!\nDuration: {actual_duration} minutes"
-                    )
+        while True:
+            self.update_project_items(project_combo)  # 在显示前再获取一下项目列表，确保项目被刷新进来了。
+            if not alreadySetDefaultIndex and self.currentProjectIndex < project_combo.count():
+                project_combo.setCurrentIndex(self.currentProjectIndex)
+                alreadySetDefaultIndex = True
+            if dialog.exec() == QDialog.Accepted:
+                description = desc_input.toPlainText().strip()
+                if not description:
+                    self.show_message("Warning", "Please enter a task description!", QMessageBox.Warning)
+                    continue
                 else:
-                    self.show_message(
-                        "Error",
-                        "Failed to save task record!",
-                        QMessageBox.Warning
-                    )
+                    break
+        project_id = project_combo.currentData()
+        self.currentProjectIndex = project_combo.currentIndex()
+
+        if description and project_id is not None:
+            if self.db.add_task(project_id, description, actual_duration):
+                self.show_message(
+                    "Success",
+                    f"Task record saved!\nDuration: {actual_duration} minutes"
+                )
+            else:
+                self.show_message(
+                    "Error",
+                    "Failed to save task record!",
+                    QMessageBox.Warning
+                )
 
     def closeEvent(self, event):
         """重写关闭事件"""
