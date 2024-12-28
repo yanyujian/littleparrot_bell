@@ -56,6 +56,7 @@ Built with / 使用技术:
 - Python
 - PyQt5
 - SQLite
+- xlsxwriter
 
 ## Installation / 安装方法
 
@@ -82,6 +83,14 @@ Built with / 使用技术:
 - Double-click the system tray icon to show/hide the timer / 双击系统托盘图标显示/隐藏计时器
 - Right-click the system tray icon and select export to export the task details into an Excel file at the program
   directory / 右键点击系统托盘图标并选择导出，将任务详情导出到程序目录下的Excel文件中
+
+### QA
+
+#### I want to modify the project name or delete the project, how can I do it? / 我想修改项目名称或删除项目，怎么办？
+
+- Download sqliteBrowser at https://sqlitebrowser.org/ and open the Pomodoro.db file at the program directory. You can
+  modify the project name or delete the project in the project table. / 在https:
+  //sqlitebrowser.org/下载sqliteBrowser，打开程序目录下的Pomodoro.db文件，你可以在项目表中修改项目名称或删除项目。
 
 ## License / 许可证
 
