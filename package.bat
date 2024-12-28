@@ -1,1 +1,1 @@
-pyinstaller -c -F --add-data="d:/develop/littleparrot_bell/images:images" -w littleparrot.py --icon D:\develop\littleparrot_bell\resources\icon.ico
+pyinstaller -c -F --add-data="d:/develop/littleparrot_bell/images:images" --add-data="d:/develop/littleparrot_bell/resources:resources" -w littleparrot.py --icon D:\develop\littleparrot_bell\resources\icon.ico
