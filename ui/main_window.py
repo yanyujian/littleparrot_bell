@@ -896,7 +896,7 @@ class MainWindow(QMainWindow):
         # 创建统计信息对话框
         dialog = QDialog(self)
         dialog.setWindowTitle("Project Statistics")
-        dialog.setMinimumSize(400, 300)
+        dialog.setMinimumSize(660, 300)
         dialog.setStyleSheet(f"""
             QDialog {{
                 background-color: {self.secondary_color};
@@ -956,11 +956,11 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(0, QHeaderView.Stretch)  # 项目名称列自适应
         header.setSectionResizeMode(1, QHeaderView.Fixed)  # 任务数固定宽度
         header.setSectionResizeMode(2, QHeaderView.Fixed)  # 总时间固定宽度
-        header.setSectionResizeMode(3, QHeaderView.Fixed)  # 平均时间固定宽度
+        header.setSectionResizeMode(3, QHeaderView.Stretch)  # 平均时间固定宽度
 
-        table.setColumnWidth(1, 100)  # 任务数列����
+        table.setColumnWidth(1, 100)  # 任务数列宽
         table.setColumnWidth(2, 120)  # 总时间列宽增加到 120
-        table.setColumnWidth(3, 140)  # 平均时间列宽增加到 140
+        table.setColumnWidth(3, 180)  # 平均时间列宽增加到 140
 
         # 填充数据
         table.setRowCount(len(stats))
