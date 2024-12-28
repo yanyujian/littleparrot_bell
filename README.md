@@ -91,6 +91,8 @@ Built with / 使用技术:
 - Download sqliteBrowser at https://sqlitebrowser.org/ and open the Pomodoro.db file at the program directory. You can
   modify the project name or delete the project in the project table. / 在https:
   //sqlitebrowser.org/下载sqliteBrowser，打开程序目录下的Pomodoro.db文件，你可以在项目表中修改项目名称或删除项目。
+### I want to change the language of this software,how can I do this? / 我想更改软件的语言，怎么办？
+- Right-click the system tray icon,select the language you want to use.**Then restart the application.** / 右键点击系统托盘图标，选择你想使用的语言。 **重启程序。**
 
 ## License / 许可证
 
