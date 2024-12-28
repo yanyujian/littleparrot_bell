@@ -20,13 +20,15 @@ from utils import sysHelper
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.currentProjectIndex = 0
+        # 添加配置管理器
+        self.config = ConfigManager()
+        self.currentProjectIndex = self.config.get('current_project_index')
         self.db = DatabaseManager()
         self.timer = QTimer()
 
         # 添加预设时间选项（分钟）
-        self.time_presets = [15, 20, 25, 30, 45]
-        self.default_time = 25 * 60
+        self.time_presets = [15, 20, 25, 30, 45, 60]
+        self.default_time = self.config.get("duration") * 60
         self.remaining_time = self.default_time
 
         # 设置应用主题色
@@ -50,7 +52,7 @@ class MainWindow(QMainWindow):
             }
         """
 
-        # ���置应用图标
+        # 设置应用图标
         icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'icon.ico')
         if os.path.exists(icon_path):
             self.app_icon = QIcon(icon_path)
@@ -64,19 +66,16 @@ class MainWindow(QMainWindow):
         self.background = QPixmap(bg_path)
         if self.background.isNull():
             print(f"Warning: Failed to load background image from {bg_path}")
-            self.background = QPixmap(32, 32)  # 创建一个空�����������������背景
+            self.background = QPixmap(32, 32)  # 创建一个空背景
 
         # 设置窗口背景为半透明黑色
         self.overlay_color = QColor(0, 0, 0, 180)  # RGBA，最后一个值是透明度
-
-        # 添加配置管理器
-        self.config = ConfigManager()
 
         # 设置窗口位置
         pos = self.config.get("window_position")
         self.move(pos["x"], pos["y"])
 
-        # 设置窗���透明度
+        # 设置窗口透明度
         self.setWindowOpacity(self.config.get("opacity"))
 
         # 设置窗口标志
@@ -119,7 +118,7 @@ class MainWindow(QMainWindow):
         time_layout = QVBoxLayout(time_frame)
 
         # 时间显示标签
-        self.time_label = QLabel("25:00")
+        self.time_label = QLabel(f"{self.config.get('duration'):02}:00")
         self.time_label.setAlignment(Qt.AlignCenter)
         self.time_label.setStyleSheet(f"""
             font-size: 48px;
@@ -149,7 +148,7 @@ class MainWindow(QMainWindow):
             }
         """
 
-        # 创建水平布���来���置���制���钮
+        # 创建水平布局来设置控制按钮
         control_layout = QHBoxLayout()
         control_layout.setSpacing(8)
 
@@ -180,20 +179,20 @@ class MainWindow(QMainWindow):
 
         self.tray_icon = QSystemTrayIcon(self)
 
-        # 使用一个明显的系统图�����
+        # 使用一个明显的系统图标
         icon = self.style().standardIcon(QStyle.SP_MediaPlay)
         self.tray_icon.setIcon(icon)
 
         # 创建托盘菜单
         tray_menu = QMenu()
-        tray_menu.setStyleSheet(self.menu_style)  # 使用���面定义���菜单样���
+        tray_menu.setStyleSheet(self.menu_style)  # 使用自定义菜单样式
 
         # 显示/隐藏主窗口
         toggle_window_action = QAction(self.tr("show_hide"), self)
         toggle_window_action.triggered.connect(self.toggle_window)
         tray_menu.addAction(toggle_window_action)
 
-        # ��始/停止计时
+        # 开始/停止计时
         self.tray_timer_action = QAction(self.tr("start"), self)
         self.tray_timer_action.triggered.connect(self.toggle_timer)
         tray_menu.addAction(self.tray_timer_action)
@@ -203,7 +202,7 @@ class MainWindow(QMainWindow):
         reset_action.triggered.connect(self.reset_timer)
         tray_menu.addAction(reset_action)
 
-        # 添加时间设置���菜单
+        # 添加时间设置菜单
         time_menu = QMenu(self.tr("set_timer"), self)
         time_menu.setObjectName("time_menu")
         time_menu.setStyleSheet(self.menu_style)
@@ -250,14 +249,22 @@ class MainWindow(QMainWindow):
         opacity_menu.setObjectName("opacity_menu")  # 设置对象名称
         opacity_menu.setStyleSheet(self.menu_style)
 
-        opacity_values = [0.3, 0.5, 0.7, 0.8, 0.9, 1.0]
+        opacity_values = [0.15, 0.3, 0.5, 0.7, 0.8, 0.9, 1.0]
         current_opacity = self.config.get("opacity")
+
+        def changeOpacity(newOpacity):
+            self.set_opacity(newOpacity)
+            # lambda checked, o=opacity: self.set_opacity(o)
+            selectedIndex = opacity_values.index(newOpacity)
+            # opacity_menu.actions()[selectedIndex].setChecked(True)
+            for index, tempAction in enumerate(opacity_menu.actions()):
+                tempAction.setChecked(selectedIndex == index)
 
         for opacity in opacity_values:
             action = QAction(f"{int(opacity * 100)}%", self)
             action.setCheckable(True)
             action.setChecked(abs(opacity - current_opacity) < 0.01)
-            action.triggered.connect(lambda checked, o=opacity: self.set_opacity(o))
+            action.triggered.connect(lambda checked, o=opacity: changeOpacity(o))
             opacity_menu.addAction(action)
 
         settings_menu.addMenu(opacity_menu)
@@ -348,7 +355,7 @@ class MainWindow(QMainWindow):
         QApplication.quit()
 
     def reset_timer(self):
-        """重置计时���"""
+        """重置计时器"""
         self.timer.stop()
         self.remaining_time = self.default_time
         minutes = self.default_time // 60
@@ -358,7 +365,6 @@ class MainWindow(QMainWindow):
         self.tray_icon.setToolTip(f"Pomodoro Timer - {minutes:02d}:00")
 
     def toggle_timer(self):
-        """��写的toggle_timer方法，同时更新托盘菜单项本"""
         if self.timer.isActive():
             self.timer.stop()
             self.start_button.setText("Start")
@@ -627,6 +633,7 @@ class MainWindow(QMainWindow):
                     break
         project_id = project_combo.currentData()
         self.currentProjectIndex = project_combo.currentIndex()
+        self.config.set("current_project_index", self.currentProjectIndex)
 
         if description and project_id is not None:
             if self.db.add_task(project_id, description, actual_duration):
@@ -654,7 +661,7 @@ class MainWindow(QMainWindow):
         )
 
     def set_timer_duration(self, minutes: int):
-        """设置计���器时长"""
+        """设置计时器时长"""
         if not self.timer.isActive():
             self.default_time = minutes * 60
             self.remaining_time = self.default_time
@@ -759,7 +766,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(time_label)
 
         time_input = QSpinBox()
-        time_input.setRange(1, 120)
+        time_input.setRange(1, 24 * 60 * 7)  # 最长一周
         time_input.setValue(25)
         time_input.setSingleStep(5)
         layout.addWidget(time_input)
@@ -789,6 +796,7 @@ class MainWindow(QMainWindow):
 
         if dialog.exec() == QDialog.Accepted:
             self.set_timer_duration(time_input.value())
+            self.config.set("duration", time_input.value())
 
     def paintEvent(self, event):
         """重写绘制事件，绘制背景图"""

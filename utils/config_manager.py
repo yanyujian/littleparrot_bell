@@ -2,6 +2,7 @@ import json
 import os
 from typing import Dict, Any
 
+
 class ConfigManager:
     def __init__(self, config_file: str = "config.json"):
         self.config_file = config_file
@@ -9,6 +10,8 @@ class ConfigManager:
             "window_position": {"x": 100, "y": 100},
             "always_on_top": False,
             "opacity": 1.0,
+            "duration": 25,
+            "current_project_index": 0,
             "language": "en"  # 添加默认语言设置
         }
         self.config = self.load_config()
@@ -38,4 +41,4 @@ class ConfigManager:
     def set(self, key: str, value: Any) -> None:
         """设置配置项"""
         self.config[key] = value
-        self.save_config() 
+        self.save_config()

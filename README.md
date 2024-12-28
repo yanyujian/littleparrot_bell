@@ -62,7 +62,7 @@ Built with / 使用技术:
 
 1. Clone the repository / 克隆仓库
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/yanyujian/littleparrot_bell.git
    ```
 
 2. Install requirements / 安装依赖
@@ -123,6 +123,10 @@ May your spirit soar freely in the endless sky.
 
 ## How to set the auto start / 如何设置开机自启动
 
+Note: This program won't add itself to the startup list automatically. You need to add it manually.Auto start feature
+won't be developed,because I want to keep this program clean and simple. Just like my bird. /
+注意：这个程序不会自动添加到启动列表中，你需要手动添加。 开机自启动功能不会开发，因为我想保持这个程序的干净、简洁。就像我的小鹦鹉一样。
+
 1. 找到程序文件（如littleparrot.exe) ,右键点击，选择发送到桌面快捷方式 / 1. Find the program file (e.g.,
    littleparrot.exe), right-click, and select "Create shortcut" to create a desktop shortcut.
 2. 将桌面快捷方式复制到C:\Users\用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup / 2. Copy the
@@ -135,3 +139,14 @@ May your spirit soar freely in the endless sky.
 1. If no project has been created, the program will prompt the user to create a project before record the task. /
    如果没有创建项目，程序会提示用户在记录任务之前创建项目。
 2. Remember the last project . / 记住上次的项目。 (仅在同一次运行中有效/Only valid in the same run)
+
+### 2024-12-28 14:00
+
+1. 记住上次设置的时长/ Remember the last set duration
+
+2. 14:06:13 将上次设置的项目保存到配置中，程序再启动后还能记住 。 / Save the last set project to the configuration file so
+   that the program can remember it after restarting.
+
+3. 14:12:21 设置程序图标。/ Set the program icon.
+
+4. 14:27:59 Fix opacity bug. / 修复透明度bug。
