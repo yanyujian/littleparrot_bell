@@ -91,8 +91,11 @@ Built with / 使用技术:
 - Download sqliteBrowser at https://sqlitebrowser.org/ and open the Pomodoro.db file at the program directory. You can
   modify the project name or delete the project in the project table. / 在https:
   //sqlitebrowser.org/下载sqliteBrowser，打开程序目录下的Pomodoro.db文件，你可以在项目表中修改项目名称或删除项目。
+
 ### I want to change the language of this software,how can I do this? / 我想更改软件的语言，怎么办？
-- Right-click the system tray icon,select the language you want to use.**Then restart the application.** / 右键点击系统托盘图标，选择你想使用的语言。 **重启程序。**
+
+- Right-click the system tray icon,select the language you want to use.**Then restart the application.** /
+  右键点击系统托盘图标，选择你想使用的语言。 **重启程序。**
 
 ## License / 许可证
 
@@ -152,3 +155,9 @@ won't be developed,because I want to keep this program clean and simple. Just li
 3. 14:12:21 设置程序图标。/ Set the program icon.
 
 4. 14:27:59 Fix opacity bug. / 修复透明度bug。
+
+### 2024-12-30 23:50:45
+
+1. 按住Ctrl键，点击停止时，可以强制停止并弹出任务填写框。此功能每日限制最多使用5次。 / Hold down the Ctrl key and click stop
+   to force stop and pop up the task fill box. This function can be used up to 5 times per day.
+2. 按菜单调整计时时长，也计入配置文件。/ Adjust the timing duration by the menu, also recorded in the configuration file.

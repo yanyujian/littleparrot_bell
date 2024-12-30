@@ -687,6 +687,7 @@ class MainWindow(QMainWindow):
             self.time_label.setText(f"{minutes:02d}:00")
             self.tray_icon.setToolTip(f"Pomodoro Timer - {minutes:02d}:00")
             self.show_message("Timer Updated", f"Timer set to {minutes} minutes")
+            self.config.set("duration", minutes)
 
     def show_message(self, title: str, message: str, icon: QMessageBox.Icon = QMessageBox.Information):
         """显示统一风格的消息框"""
