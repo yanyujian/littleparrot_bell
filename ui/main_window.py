@@ -10,6 +10,8 @@ from PyQt5.QtWidgets import QStyle
 from database.db_manager import DatabaseManager
 import os
 from utils.config_manager import ConfigManager
+from utils.dailyLimitationManager import DailyLimitationManager
+from utils.entrypt_manager import EncryptDecrypt
 from utils.language_manager import LanguageManager
 import xlsxwriter
 from datetime import datetime
@@ -22,6 +24,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         # 添加配置管理器
         self.config = ConfigManager()
+        self.encryptManager = EncryptDecrypt.littleParrotEncryptManager()
+        self.dailyLimitationManager = DailyLimitationManager(dateLimitationStr=self.encryptManager.decrypt(self.config.get("date_limitation_str")))
         self.currentProjectIndex = self.config.get('current_project_index')
         self.db = DatabaseManager()
         self.timer = QTimer()
@@ -360,28 +364,43 @@ class MainWindow(QMainWindow):
         self.remaining_time = self.default_time
         minutes = self.default_time // 60
         self.time_label.setText(f"{minutes:02d}:00")
-        self.start_button.setText("Start")
-        self.tray_timer_action.setText("Start")
+        self.start_button.setText(self.tr("start"))
+        self.tray_timer_action.setText(self.tr("start"))
         self.tray_icon.setToolTip(f"Pomodoro Timer - {minutes:02d}:00")
+
+    def forceStopTime(self) -> bool:
+        """
+        强制停止当前计时，每日限定5次
+        :return:
+        """
+        modifiers = QApplication.keyboardModifiers()
+        if modifiers == Qt.ControlModifier and not self.dailyLimitationManager.reachedDailyLimitation:
+            self.dailyLimitationManager.use(1)
+            self.config.set("date_limitation_str", self.encryptManager.encrypt(self.dailyLimitationManager.toString()))
+            self.update_timer(forceStop=True)
+            return True
+        return False
 
     def toggle_timer(self):
         if self.timer.isActive():
             self.timer.stop()
-            self.start_button.setText("Start")
-            self.tray_timer_action.setText("Start")
+            if self.forceStopTime():
+                return
+            self.start_button.setText(self.tr("start"))
+            self.tray_timer_action.setText(self.tr("start"))
         else:
             self.timer.start()
-            self.start_button.setText("Stop")
-            self.tray_timer_action.setText("Stop")
+            self.start_button.setText(self.tr("stop"))
+            self.tray_timer_action.setText(self.tr("stop"))
 
-    def update_timer(self):
+    def update_timer(self, forceStop=False):
         """更新的update_timer方法，同时更新托盘图标提示"""
         self.remaining_time -= 1
         minutes = self.remaining_time // 60
         seconds = self.remaining_time % 60
         time_text = f"{minutes:02d}:{seconds:02d}"
 
-        if self.remaining_time <= 0:
+        if self.remaining_time <= 0 or forceStop:
             self.timer.stop()
             self.start_button.setText("Start")
             self.tray_timer_action.setText("Start")
@@ -389,14 +408,14 @@ class MainWindow(QMainWindow):
             next_minutes = self.default_time // 60
             self.time_label.setText(f"{next_minutes:02d}:00")
             self.tray_icon.setToolTip(f"Pomodoro Timer - {next_minutes:02d}:00")
-            self.remaining_time = self.default_time  # 重置时间
             self.tray_icon.showMessage(
                 "Pomodoro Timer",
                 "Time's up! Please record your work.",
                 QSystemTrayIcon.Information,
                 2000  # 显示2秒
             )
-            self.show_task_dialog()
+            self.show_task_dialog(forceStop=forceStop)
+            self.remaining_time = self.default_time  # 重置时间
         else:
             self.time_label.setText(time_text)
             self.tray_icon.setToolTip(f"Pomodoro Timer - {time_text}")
@@ -493,7 +512,7 @@ class MainWindow(QMainWindow):
             if project_combo.findData(project_id) == -1:
                 project_combo.addItem(project_name, project_id)
 
-    def show_task_dialog(self):
+    def show_task_dialog(self, forceStop=False):
         """显示任务完成对话框"""
         # 创建自定义对话框
         dialog = QDialog(self)
@@ -580,7 +599,7 @@ class MainWindow(QMainWindow):
         # 显示实际用时
         actual_duration = (self.default_time - self.remaining_time) // 60
         if actual_duration == 0:
-            actual_duration = self.default_time // 60
+            actual_duration = 1  # 不足1分钟，按1分钟算。
 
         duration_label = QLabel(f"Duration: {actual_duration} minutes")
         duration_label.setAlignment(Qt.AlignCenter)

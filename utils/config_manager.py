@@ -12,6 +12,7 @@ class ConfigManager:
             "opacity": 1.0,
             "duration": 25,
             "current_project_index": 0,
+            "date_limitation_str": "",
             "language": "en"  # 添加默认语言设置
         }
         self.config = self.load_config()
