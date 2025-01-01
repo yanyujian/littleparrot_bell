@@ -25,7 +25,8 @@ class MainWindow(QMainWindow):
         # 添加配置管理器
         self.config = ConfigManager()
         self.encryptManager = EncryptDecrypt.littleParrotEncryptManager()
-        self.dailyLimitationManager = DailyLimitationManager(dateLimitationStr=self.encryptManager.decrypt(self.config.get("date_limitation_str")))
+        self.dailyLimitationManager = DailyLimitationManager(
+            dateLimitationStr=self.encryptManager.decrypt(self.config.get("date_limitation_str")))
         self.currentProjectIndex = self.config.get('current_project_index')
         self.db = DatabaseManager()
         self.timer = QTimer()
@@ -205,6 +206,12 @@ class MainWindow(QMainWindow):
         reset_action = QAction(self.tr("reset"), self)
         reset_action.triggered.connect(self.reset_timer)
         tray_menu.addAction(reset_action)
+
+        # 手动输入
+        tray_menu.addSeparator()
+        manual_input_action = QAction(self.tr("manual_input"), self)
+        manual_input_action.triggered.connect(self.manual_input)
+        tray_menu.addAction(manual_input_action)
 
         # 添加时间设置菜单
         time_menu = QMenu(self.tr("set_timer"), self)
@@ -393,9 +400,12 @@ class MainWindow(QMainWindow):
             self.start_button.setText(self.tr("stop"))
             self.tray_timer_action.setText(self.tr("stop"))
 
-    def update_timer(self, forceStop=False):
+    def manual_input(self):
+        self.update_timer(forceStop=True, manualSetFlag=True)
+
+    def update_timer(self, forceStop=False, manualSetFlag=False):
         """更新的update_timer方法，同时更新托盘图标提示"""
-        self.remaining_time -= 1
+        self.remaining_time = 0 if manualSetFlag else (self.remaining_time - 1)
         minutes = self.remaining_time // 60
         seconds = self.remaining_time % 60
         time_text = f"{minutes:02d}:{seconds:02d}"
