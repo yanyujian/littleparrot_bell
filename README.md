@@ -161,3 +161,6 @@ won't be developed,because I want to keep this program clean and simple. Just li
 1. 按住Ctrl键，点击停止时，可以强制停止并弹出任务填写框。此功能每日限制最多使用5次。 / Hold down the Ctrl key and click stop
    to force stop and pop up the task fill box. This function can be used up to 5 times per day.
 2. 按菜单调整计时时长，也计入配置文件。/ Adjust the timing duration by the menu, also recorded in the configuration file.
+
+### 2025-01-01 19:48:14
+1. 增加手动补录记录的功能（目前无法修改补录任务的完成时间，短期应该不会加）。 / Add the function of manually supplementing records (currently unable to modify the completion time of the supplementary task, it should not be added in the short term).
