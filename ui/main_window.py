@@ -670,6 +670,8 @@ class MainWindow(QMainWindow):
                     "Success",
                     f"Task record saved!\nDuration: {actual_duration} minutes"
                 )
+                # auto start
+                self.toggle_timer()
             else:
                 self.show_message(
                     "Error",
