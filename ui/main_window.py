@@ -666,10 +666,10 @@ class MainWindow(QMainWindow):
 
         if description and project_id is not None:
             if self.db.add_task(project_id, description, actual_duration):
-                self.show_message(
-                    "Success",
-                    f"Task record saved!\nDuration: {actual_duration} minutes"
-                )
+                # self.show_message(
+                #     "Success",
+                #     f"Task record saved!\nDuration: {actual_duration} minutes"
+                # )
                 # auto start
                 self.toggle_timer()
             else:
